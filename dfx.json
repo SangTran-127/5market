@@ -1,0 +1,47 @@
+{
+  "canisters": {
+    "counter": {
+      "main": "canisters/counter/main.mo",
+      "type": "motoko"
+    },
+    "nft": {
+      "main": "canisters/nft/main.mo",
+      "type": "motoko"
+    },
+    "market": {
+      "main": "canisters/market/main.mo",
+      "type": "motoko"
+    },
+    "assets": {
+      "dependencies": [
+        "counter"
+      ],
+      "frontend": {
+        "entrypoint": "dist/index.html"
+      },
+      "source": [
+        "dist/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": ""
+    }
+  },
+  "dfx": "0.9.3",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8080",
+      "type": "ephemeral"
+    },
+    "ic": {
+      "providers": [
+        "https://mainnet.dfinity.network"
+      ],
+      "type": "persistent"
+    }
+  },
+  "version": 1
+}
