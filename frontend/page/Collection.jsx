@@ -26,7 +26,6 @@ const Collection = ({ principal }) => {
                     <Loading />
                     :
                     <div>
-
                         {
                             userNFTData == [] ?
                                 "You dont have any NFT"
@@ -34,7 +33,7 @@ const Collection = ({ principal }) => {
                                 <div>
                                     {
                                         userNFTData.map((nftID, id) => (
-                                            <Card key={id} id={nftID} />
+                                            <Card type="collection" key={id} id={nftID} />
                                         ))
                                     }
                                 </div>

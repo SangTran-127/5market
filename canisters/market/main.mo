@@ -69,5 +69,45 @@ actor Market {
         }
 
     };
+    public query func getOriginalOwner(id: Principal) : async Principal {
+        var item : Item = switch(itemMaps.get(id)) {
+            case null return Principal.fromText("");
+            case (?result) result;
+        };
+        return item.ownerItem;
+    };
+    public query func isListed(id: Principal) : async Bool {
+      if (itemMaps.get(id) == null) {
+        return false;
+      } else{
+        return true;
+      }
+    };
 
+    public query func get5MarketCanisterID() : async Principal {
+      return Principal.fromActor(Market);
+    };
+
+    public shared({caller}) func transfer(id: Principal, ownerID: Principal, newOwnerID: Principal) : async Text {
+        var nftPurchase : NFTActor.NFT = switch (nftMaps.get(id)) {
+            case null return "NFT does not exist";
+            case (?result) result;
+        };
+        let transferResult = await nftPurchase.transferTo(newOwnerID);
+        Debug.print(Principal.toText(newOwnerID));
+        if (transferResult == "Success") {
+            itemMaps.delete(id);
+            var ownerNFT : List.List<Principal> = switch (ownerMaps.get(ownerID)) {
+                case null List.nil<Principal>();
+                case (?result) result;
+            };
+            ownerNFT := List.filter(ownerNFT, func (itemID : Principal) : Bool {
+                return itemID != id;
+            });
+            addToOwner(newOwnerID, id);
+            return "Success";
+        } else {
+            return transferResult;
+        }
+    };
 }

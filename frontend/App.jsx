@@ -27,6 +27,7 @@ import Mint from "./page/Mint"
 import { useBalance, useWallet } from "@connect2ic/react"
 import { Principal } from "@dfinity/principal";
 import Collection from "./page/Collection"
+import Discover from "./page/Discover"
 function App() {
 
   const [markert] = useCanister("market");
@@ -54,6 +55,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/mint" element={<Mint />} />
         <Route path="/collection" element={<Collection principal={principal} />} />
+        <Route path="/discover" element={<Discover principal={principal} />} />
       </Routes>
     </div>
 

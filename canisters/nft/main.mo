@@ -24,11 +24,12 @@ actor class NFT(name : Text, owner : Principal, content : [Nat8]) = this {
     };
     // method set owner moi
     public shared({caller}) func transferTo(newOwner : Principal) : async Text {
-        if (caller == nftOwner) {
+        
+        // if (Principal.equal(caller, nftOwner)) {
             nftOwner := newOwner;
             return "Success";
-        } else {
-            return "Error, not initiated by NFT Owner";
-        }
+        // } else {
+        //     return "Error, not initiated by NFT Owner";
+        // }
     };
 }
