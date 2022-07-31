@@ -19,10 +19,24 @@ const Header = ({ principal }) => {
                             Discover
                         </Nav.Link>
                         <Nav.Link to='/mint' as={NavLink}>
-                            Minter
+                            Mint NFT
                         </Nav.Link>
+                        {
+
+                            principal ? <Nav.Link to="/register" as={NavLink}>
+                                Register
+                            </Nav.Link> : null
+
+
+                        }
                         <Nav.Link to='/collection' as={NavLink}>
                             {principal ? "My NFTs" : null}
+                        </Nav.Link>
+                        <Nav.Link to='/transfer' as={NavLink}>
+                            {principal ? "Transfer" : null}
+                        </Nav.Link>
+                        <Nav.Link to='/profile' as={NavLink}>
+                            {principal ? "view profile" : null}
                         </Nav.Link>
                         <Nav.Link>
                             <ConnectButton />
@@ -32,7 +46,7 @@ const Header = ({ principal }) => {
 
             </Container>
             <ConnectDialog />
-        </Navbar>
+        </Navbar >
     )
 }
 

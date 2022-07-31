@@ -110,4 +110,26 @@ actor Market {
             return transferResult;
         }
     };
+    public shared({caller}) func new_transfer(to: Principal, tokenId: Principal) : async Text {
+        var nftPurchase : NFTActor.NFT = switch (nftMaps.get(tokenId)) {
+            case null return "NFT does not exist";
+            case (?result) result;
+        };
+        let transferResult = await nftPurchase.transferTo(to);
+        Debug.print(Principal.toText(to));
+        if (transferResult == "Success") {
+            itemMaps.delete(tokenId);
+            var ownerNFT : List.List<Principal> = switch (ownerMaps.get(tokenId)) {
+                case null List.nil<Principal>();
+                case (?result) result;
+            };
+            ownerNFT := List.filter(ownerNFT, func (itemID : Principal) : Bool {
+                return itemID != to;
+            });
+            addToOwner(tokenId, to);
+            return "Success";
+        } else {
+            return transferResult;
+        }
+    };
 }

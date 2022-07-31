@@ -13,6 +13,7 @@ const Card = (props) => {
     const localHost = "http://localhost:8080/";
     const agent = new HttpAgent({ host: localHost });
     const [nft] = useCanister("nft");
+    const [input, setInput] = useState();
     const [market] = useCanister("market");
     const [name, setName] = useState();
     const [owner, setOwner] = useState();
@@ -58,26 +59,12 @@ const Card = (props) => {
             }
         }
     }
-    async function sellItem() {
-        setBlur({ filter: "blur(4px)" });
-        setLoading(true)
-        const listingResult = await market.itemList(props.id);
-        console.log("listing: " + listingResult);
-        if (listingResult == "Success") {
-            const marketID = await market.get5MarketCanisterID();
-            const transferResult = await NFTActor.transferTo(marketID);
-            console.log("transfer: " + transferResult);
-            if (transferResult == "Success") {
-                setLoading(false);
-                setBtn();
-                setPriceInput();
-                setOwner("5Market");
-                setSaleStatus("Listed");
-            }
-        }
-    }
+    let toPrincipal
     function handleSell() {
         alert("Sell clicked");
+        setInput(
+            <input type="text" placeholder='to principal' value={toPrincipal} onChange={(e) => (toPrincipal = e.target.value)} />
+        )
         setBtn(<Button onClick={sellItem}>Confirm</Button>);
     }
     async function handleBuy() {
@@ -96,6 +83,35 @@ const Card = (props) => {
         setDisplay(false);
     }
 
+    async function sellItem() {
+        setBlur({ filter: "blur(4px)" });
+        setLoading(true)
+        const result = await market.new_transfer(Principal.fromHex("r7inp-6aaaa-aaaaa-aaabq-cai"), id);
+        console.log(result);
+        if (result == "Success") {
+            setLoading(false);
+            setBtn();
+
+            setDisplay(false)
+        }
+        alert(result)
+        // const listingResult = await market.itemList(props.id);
+        // console.log("listing: " + listingResult);
+        // if (listingResult == "Success") {
+        //     const marketID = await market.get5MarketCanisterID();
+        //     const transferResult = await NFTActor.transferTo(marketID);
+        //     console.log("transfer: " + transferResult);
+        //     if (transferResult == "Success") {
+        //         setLoading(false);
+        //         setBtn();
+        //         setPriceInput();
+        //         setOwner("5Market");
+        //         setSaleStatus("Listed");
+        //     }
+        // }
+    }
+
+
     useEffect(() => {
         loadNFT();
     }, []);
@@ -106,6 +122,7 @@ const Card = (props) => {
             <p>{name}</p>
             <p>{saleStatus}</p>
             <p>{owner}</p>
+            <p>{input}</p>
             <p>{btn}</p>
         </div>
     )

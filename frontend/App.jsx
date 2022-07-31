@@ -4,7 +4,8 @@ import { Routes, Route } from "react-router-dom"
  * Connect2ic provides essential utilities for IC app development
  */
 import { createClient } from "@connect2ic/core"
-import { defaultProviders } from "@connect2ic/core/providers"
+
+import { PlugWallet } from "@connect2ic/core/providers/plug-wallet"
 import { Connect2ICProvider, useConnect } from "@connect2ic/react"
 import { useCanister } from "@connect2ic/react"
 import "@connect2ic/core/style.css"
@@ -13,11 +14,11 @@ import "@connect2ic/core/style.css"
  */
 import * as counter from "../.dfx/local/canisters/counter"
 import * as market from "../.dfx/local/canisters/market"
+import * as customer from "../.dfx/local/canisters/customer"
 /*
  * Some examples to get you started
  */
 import { Counter } from "./components/Counter"
-import { Transfer } from "./components/Transfer"
 import { Profile } from "./components/Profile"
 
 /// component 
@@ -28,8 +29,11 @@ import { useBalance, useWallet } from "@connect2ic/react"
 import { Principal } from "@dfinity/principal";
 import Collection from "./page/Collection"
 import Discover from "./page/Discover"
+import Register from "./page/Register"
+import Transfer from "./components/Transfer"
+import TransferTo from "./components/TransferTo"
+import ReadProfile from "./components/ReadProfile"
 function App() {
-
   const [markert] = useCanister("market");
   const [data, setData] = useState()
   // const [principalData, setPrincipalData] = useState("")
@@ -51,11 +55,19 @@ function App() {
   return (
     <div className="App">
       <Header principal={principal} />
+      {principal ?
+        <p className="text-center">hello, {principal}</p>
+        : null
+
+      }
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register principal={principal} />} />
+        {/* <Route path="/transfer" element={<TransferTo principal={principal} />}></Route> */}
+        <Route path="/profile" element={< ReadProfile principal={principal} />} />
         <Route path="/mint" element={<Mint />} />
         <Route path="/collection" element={<Collection principal={principal} />} />
-        <Route path="/discover" element={<Discover principal={principal} />} />
+        {/* <Route path="/discover" element={<Discover principal={principal} />} /> */}
       </Routes>
     </div>
 
@@ -65,9 +77,12 @@ function App() {
 const client = createClient({
   canisters: {
     counter,
-    market
+    market,
+    customer
   },
-  providers: defaultProviders,
+  providers: [
+    new PlugWallet(),
+  ],
   globalProviderConfig: {
     /*
      * Disables dev mode in production

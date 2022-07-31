@@ -4,6 +4,10 @@
       "main": "canisters/counter/main.mo",
       "type": "motoko"
     },
+    "customer": {
+      "main": "canisters/customer/main.mo",
+      "type": "motoko"
+    },
     "nft": {
       "main": "canisters/nft/main.mo",
       "type": "motoko"

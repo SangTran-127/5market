@@ -1,30 +1,49 @@
-import React from "react"
-import { useWallet, useTransfer } from "@connect2ic/react"
-
-const Transfer = () => {
-
-  const [wallet] = useWallet()
-  const [transfer] = useTransfer({
-    to: "9dd04c8ba6039018a7b6d569cf6192efc596a0435fdc7f6fdb2d017518360409",
-    amount: Number(0.01),
-  })
-
-  const onPurchase = async () => {
-    const { height } = await transfer()
-  }
-
-  return (
-    <div className="example">
-      {wallet ? (
-        <>
-          <p>Buy me beer</p>
-          <button className="connect-button" onClick={onPurchase}>Purchase</button>
-        </>
-      ) : (
-        <p className="example-disabled">Connect with a wallet to access this example</p>
-      )}
-    </div>
-  )
+import React, { useState, useEffect } from 'react'
+import { useCanister } from '@connect2ic/react'
+import Loading from "./Loading";
+import { Principal } from '@dfinity/principal';
+import Card from "./Card"
+const Transfer = (props) => {
+    const { principal } = props
+    const [loading, setLoading] = useState(false)
+    const [userNFTData, setUserNFTData] = useState([])
+    const [market] = useCanister("market");
+    async function callNFT() {
+        setLoading(true)
+        const userNFT = await market.getOwnerNFT(Principal.fromText(principal));
+        console.log(userNFT);
+        setUserNFTData(userNFT)
+        setLoading(false)
+    }
+    useEffect(() => {
+        callNFT()
+    }, [])
+    return (
+        <div>
+            <h3>Available NFTs</h3>
+            <div>
+                {
+                    loading ?
+                        <Loading />
+                        :
+                        <div>
+                            {
+                                userNFTData == [] ?
+                                    "You dont have any NFT"
+                                    :
+                                    <div>
+                                        {
+                                            userNFTData.map((nftID, id) => (
+                                                <Card type="transfer" key={id} id={nftID} />
+                                            ))
+                                        }
+                                    </div>
+                            }
+                        </div>
+                }
+            </div>
+        </div>
+    )
 }
 
-export { Transfer }
+export default Transfer
